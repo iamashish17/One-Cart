@@ -55,15 +55,16 @@ export const login = async (req,res) => {
         return res.status(201).json({message:"login succesful"})
     } catch (error) {
         console.log("SignUp Error")
-        return res.status(500).json({message:`registration error ${error}`})
+        return res.status(500).json({message:`Login error ${error}`})
     }
 }
 
 export const logOut = async (req,res) => {
     try {
         res.clearCookies("token")
-        
+        return res.status(200).json({message:"Logout Succesfull"})
     } catch (error) {
-        
+        console.log("Logout error")
+        return res.status(500).json({message:`Logout error${error}`})
     }
 }
