@@ -21,8 +21,8 @@ export const registration = async (req,res) => {
 
         const user = await User.create({name,email,password:hashPassword})
         let token = await gentoken(user._id)
-        res.cookie("token",token,{
-            httpOnly:true,
+        res.cookies("token",token,{
+            httpsOnly:true,
             secure:false,
             sameSize: "Strict",
             maxAge: 7 * 24 * 60 * 60 * 1000 
@@ -61,10 +61,34 @@ export const login = async (req,res) => {
 
 export const logOut = async (req,res) => {
     try {
-        res.clearCookies("token")
+        res.clearCookie("token")
         return res.status(200).json({message:"Logout Succesfull"})
     } catch (error) {
         console.log("Logout error")
         return res.status(500).json({message:`Logout error${error}`})
+    }
+}
+
+export const googleLogin = async (req,res) => {
+    try {
+        let {name, email} = req.body;
+        let user = await User.findOne({email})
+        if(!user){
+            user = await User.create({
+                name,email
+            })
+        }
+
+        let token = await gentoken(user._id)
+        res.cookie("token",token,{
+            httpOnly:true,
+            secure:false,
+            sameSize: "Strict",
+            maxAge: 7 * 24 * 60 * 60 * 1000
+        })
+        return res.status(200).json(user)
+    } catch (error) {
+        console.log("googleLogin error")
+        return res.status(500).json({message:`googleLogin error${error}`})
     }
 }
